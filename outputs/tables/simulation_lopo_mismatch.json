@@ -1,0 +1,12 @@
+{
+  "n_replicates": 500,
+  "n_populations": 95,
+  "generating_process": "pc1 ~ seedsize + moist_pc1 + season_pc1 + noise; predictors correlated with latitude; temperature weakly correlated with latitude",
+  "rate_ecology_best_lopo": 0.84,
+  "rate_lat_strongest_r": 1.0,
+  "rate_lat_r_mismatch": 0.84,
+  "rate_aic_lat_mismatch": 0.0,
+  "rate_aic_prefers_lat_over_ecology": 0.0,
+  "volume_ii_claim": "Proposition 3--4 (gradient confounding / rank reversal)",
+  "project_50_source": "scripts/08_lopo_simulation.py"
+}
