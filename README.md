@@ -39,7 +39,9 @@ Project 55 is the **home for Volume II** — ecology / spatial generalization in
 - [x] §2–3 proof drafts (P1–P4)
 - [x] LOPO numbers table for §2 vignette (from Project 50)
 - [x] Literature bib (~54 BibTeX keys + proposition map)
-- [x] LaTeX scaffold restructured to match Volume I (`1.docx`): Results-first, Table 1, dual-audience intro (~8 pp draft)
+- [x] Figure 2 composite (`scripts/stator_figure2_composite.py`)
+- [x] Media summary (Interface; `stillwell2026b_media_summary.md`)
+- [ ] Migrate to Interface LaTeX template + split ESM
 - [x] Collinearity / LOPO simulation (ported from Project 50)
 - [x] Venue decision: **Interface** (~5k words main + ESM; paired with Volume I)
 

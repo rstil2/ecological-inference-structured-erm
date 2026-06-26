@@ -168,4 +168,5 @@ Volume II: “Spatial CV literature (Roberts et al.) prescribes holdout geometry
 | Empirical validation subsection | ✅ |
 | Expanded Discussion | ✅ |
 | Methods section | ✅ |
-| Figure 2 composite | ⚠️ placeholder box — replace at submission |
+| Figure 2 composite | ✅ `outputs/figures/stator_empirical_summary_composite.png` |
+| Media summary (Interface) | ✅ `stillwell2026b_media_summary.md` + § in `.tex` |
