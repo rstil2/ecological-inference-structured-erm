@@ -41,7 +41,7 @@ Output: `submission/interface/` — main PDF, ESM PDF, figures, LaTeX source, co
 - [x] Scope language (simulation rates design-specific; Stator illustrative)
 - [x] No load-bearing unpublished methods companion cites
 - [x] Code URL in Methods (not “on request”)
-- [ ] **Public GitHub repo live** + Zenodo DOI at submission
+- [x] **Public GitHub repo live** + Zenodo DOI at submission
 - [ ] Cover letter updated; Volume I status current
 - [ ] ScholarOne upload (`https://mc.manuscriptcentral.com/rsif`)
 

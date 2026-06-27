@@ -39,7 +39,7 @@ ACKS_SECTION = rf"""
 
 \textbf{{Use of AI:}} During manuscript preparation (2026), the author used
 Cursor with large-language-model assistance to edit prose for readability,
-format \LaTeX{}, and draft reproducible analysis scripts.  No AI tool was
+format \\LaTeX{{}}, and draft reproducible analysis scripts.  No AI tool was
 listed as an author.  The author reviewed and verified all scientific
 statements, formal results, empirical analyses, figures, tables, and
 references.
