@@ -1,12 +1,12 @@
-# Media summary — Volume II (Interface submission)
+# Media summary — Volume II
 
 **Manuscript:** *Ecological Inference Is Structured Empirical Risk Minimization*  
-**Limit:** ≤ 100 words (Royal Society Interface, final submission)  
-**Status:** Draft — paste into submission portal at acceptance
+**Limit:** ≤ 100 words (Interface / MEE, if required at submission)  
+**Status:** Draft — paste into submission portal when requested
 
 ---
 
-Scientists often use latitude or temperature to predict how animal body size or species ranges will shift under climate change. A strong fit across many survey sites does not guarantee accurate prediction at new locations. We show that the usual statistical checks can mislead: in beetle populations across western North America and in computer simulations, the strongest correlate on the full survey disagreed with the best predictor at withheld sites in 84% of cases, and the wrong cross-validation method inflated error by up to 45%. We give a simple rule—hold out whole populations or regions when the goal is prediction at new sites—and unify this with machine-learning theory of generalization across space.
+Climate and biogeographic models often fit strongly across surveyed sites yet fail at new locations—a costly error for range-shift and conservation planning. The fault is rarely the correlate and often the certificate: in-sample fit can validate the wrong target. Under a stated semi-synthetic design, the strongest in-sample correlate and leave-one-population-out validation disagree on model ranking in 84% of replicates; on a beetle survey across western North America, individual k-fold cross-validation inflated error by ~45% relative to population holdout. Match the holdout unit to the claim—withhold whole populations or regions when the goal is prediction at new sites—and treat the problem as structured generalization: the spatial face of the same geometry that governs learning across generations in evolution and in machine learning.
 
 **Word count:** 99
 
@@ -14,6 +14,5 @@ Scientists often use latitude or temperature to predict how animal body size or 
 
 ## Notes
 
-- Interface prompts for media summary at **final files** stage, not initial submission.
-- PNAS-style *Significance Statement* is **not** required by Interface; this file replaces that item in the submission checklist.
-- Companion Volume I should carry its own media summary when accepted.
+- The **84%** figure is from semi-synthetic simulation under a stated generating process, not the empirical beetle survey.
+- Interface prompts for media summary at **final files** stage; MEE may differ—check author guidelines at submission.

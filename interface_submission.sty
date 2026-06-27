@@ -1,0 +1,119 @@
+%% interface_submission.sty
+%% Draft submission formatting for Journal of the Royal Society Interface.
+%% Format-free initial submission: double-spaced main text, line numbers, natbib.
+%% Replace with official Royal Society cls at acceptance if required.
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{interface_submission}[2026/06/26 Interface draft submission style]
+
+\newif\if@interfacesubnolinenum
+\@interfacesubnolinenumfalse
+\DeclareOption{nolinenumbers}{\@interfacesubnolinenumtrue}
+\ProcessOptions\relax
+
+\RequirePackage{graphicx}
+\RequirePackage{amsmath,amssymb}
+\RequirePackage{booktabs,array}
+\RequirePackage{natbib}
+\RequirePackage{setspace}
+\RequirePackage{etoolbox}
+\if@interfacesubnolinenum
+\else
+  \RequirePackage{float}
+\fi
+\if@interfacesubnolinenum
+\else
+  \RequirePackage{lineno}
+\fi
+\RequirePackage{hyperref}
+\RequirePackage{url}
+
+\newcommand{\repoUrl}{\url{https://github.com/rstil2/ecological-inference-structured-erm}}
+
+\bibliographystyle{plainnat}
+
+\graphicspath{{figures/}}
+
+\if@twocolumn
+  \doublespacing
+\else
+  \doublespacing
+\fi
+
+\if@interfacesubnolinenum
+\else
+  %% lineno + amsmath / proof compatibility (floats excluded: lineno vadjust bug)
+  \AtBeginDocument{%
+    \linenumbers
+    \AtBeginEnvironment{equation}{\linenomath}%
+    \AtEndEnvironment{equation}{\endlinenomath}%
+    \AtBeginEnvironment{equation*}{\linenomath}%
+    \AtEndEnvironment{equation*}{\endlinenomath}%
+    \AtBeginEnvironment{align}{\linenomath}%
+    \AtEndEnvironment{align}{\endlinenomath}%
+    \AtBeginEnvironment{align*}{\linenomath}%
+    \AtEndEnvironment{align*}{\endlinenomath}%
+    \AtBeginEnvironment{proof}{\linenomath}%
+    \AtEndEnvironment{proof}{\endlinenomath}%
+  }
+\fi
+
+%% JMLR-compatible author macros (Volume I / II shared convention)
+\def\name{\normalsize\bf}
+\def\email{\hfill\small\sc}
+\def\addr{\small\it}
+
+\newcommand{\editor}[1]{\gdef\@editor{#1}}
+\gdef\@editor{}
+
+\renewcommand{\maketitle}{%
+  \begin{center}
+    {\LARGE\bfseries\@title\par}
+    \vskip 1.0em
+    {\normalsize\@author\par}
+    \ifx\@editor\@empty\else
+      \vskip 0.5em
+      {\small\itshape\@editor\par}
+    \fi
+  \end{center}
+  \vskip 1.5em
+}
+
+\newenvironment{keywords}{%
+  \vskip 0.5em
+  \noindent\textbf{Keywords:}\ %
+}{%
+  \vskip 1em
+}
+
+\long\def\acks#1{%
+  \vskip 0.3in
+  \noindent{\large\bfseries Acknowledgments and disclosure of funding}\vskip 0.2in
+  \noindent #1\par
+}
+
+\newcommand{\BlackBox}{\rule{1.5ex}{1.5ex}}
+\ifdefined\proof
+  \renewenvironment{proof}{\par\noindent{\bfseries Proof\ }}{\hfill\BlackBox\\[2mm]}
+\else
+  \newenvironment{proof}{\par\noindent{\bfseries Proof\ }}{\hfill\BlackBox\\[2mm]}
+\fi
+
+\newtheorem{example}{Example}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{conjecture}[theorem]{Conjecture}
+\newtheorem{axiom}[theorem]{Axiom}
+
+\newcommand{\Rhat}{\hat{R}}
+\newcommand{\RLOPO}{\hat{R}^{\mathrm{LOPO}}}
+\newcommand{\Rkfold}{\hat{R}^{\mathrm{kfold}}}
+\newcommand{\supp}{\mathrm{supp}}
+\newcommand{\Estimand}[1]{\ensuremath{\mathrm{E}_{#1}}}
+\newcommand{\Eone}{\Estimand{1}}
+\newcommand{\Etwo}{\Estimand{2}}
+\newcommand{\Ethree}{\Estimand{3}}

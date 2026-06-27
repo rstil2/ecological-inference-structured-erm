@@ -1,0 +1,559 @@
+\documentclass[11pt]{article}
+
+\usepackage[nolinenumbers]{interface_submission}
+
+\title{Electronic Supplementary Material for:\\
+       Ecological Inference Is Structured Empirical Risk Minimization:\\
+       Generalization Across Space, Nested Units, and Niche Support}
+
+\author{R.\ Craig Stillwell\\
+        Independent Researcher\\
+        craig.stillwell@gmail.com}
+
+\date{June 2026}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+This electronic supplementary material (ESM) supports \emph{Ecological
+Inference Is Structured Empirical Risk Minimization} (Stillwell, 2026).
+It contains full proofs of all formal results in the main text, maps ESM
+section numbers to main-text labels (Table~\ref{tab:esm-map}), supplementary
+tables for the \emph{Stator limbatus} geographic cline vignette, and the
+semi-synthetic simulation protocol.  Analysis code:
+\repoUrl{} (\texttt{REPRODUCE.md}).
+\end{abstract}
+
+\tableofcontents
+
+% ==================================================================
+\section{Shared setup}
+\label{sec:setup}
+% ==================================================================
+
+Data are nested: individual $i \in \{1,\ldots,n_p\}$ in population
+(site) $p \in \{1,\ldots,P\}$.  Write individual response $y_{ip}$,
+population mean $\bar{y}_p = n_p^{-1}\sum_i y_{ip}$, site covariates
+$\mathbf{x}_p \in \mathcal{X} \subset \mathbb{R}^d$, hypothesis class
+$\mathcal{H}$, and squared loss $\ell(\hat{y},y)=(\hat{y}-y)^2$ unless
+noted otherwise.
+
+Population-level generative model:
+\begin{equation}
+  y_{ip} = \mu(\mathbf{x}_p) + u_p + \varepsilon_{ip},
+  \qquad \mathbb{E}[u_p \mid \mathbf{x}_p]=0,
+  \label{eq:esm-nested}
+\end{equation}
+with $\mu(\mathbf{x}_p)=\mathbb{E}[\bar{y}_p\mid\mathbf{x}_p]$.
+Macroecological cline hypotheses concern $\mu(\cdot)$, not
+within-population noise.  Site-level random effect $u_p$ in
+\eqref{eq:esm-nested} is distinct from biotic context $b_p$ introduced
+in Section~\ref{sec:thm5}.
+
+Leave-one-population-out (LOPO) risk on population means:
+\begin{equation}
+  R_{\mathrm{LOPO}}(h)
+  = \frac{1}{P}\sum_{p=1}^P
+    \Big(\bar{y}_p - \hat{h}^{(-p)}(\mathbf{x}_p)\Big)^2,
+\end{equation}
+where $\hat{h}^{(-p)}$ is fit on all populations except $p$.
+
+\begin{table}[h]
+  \caption{Map from ESM sections to main-text labels.}
+  \label{tab:esm-map}
+  \begin{center}
+  \small
+  \begin{tabular}{lll}
+    \toprule
+    ESM & Main text & Result \\
+    \midrule
+    \S\ref{sec:thm1} & Theorem~1 & Estimand--CV mismatch \\
+    \S\ref{sec:def-estimands} & Definition~1 & Three estimands \\
+    \S\ref{sec:esm-lemma-oracle} & Lemma~1 & Oracle risk ordering \\
+    \S\ref{sec:esm-rank-reversal} & Theorem~2 & Proxy rank reversal \\
+    \S\ref{sec:thm4} & Proposition~3 & Grinnellian support \\
+    \S\ref{sec:thm5} & Proposition~4 & Hidden context \\
+    \S\ref{sec:thm6} & Proposition~5 & Plasticity / composite label \\
+    \S\ref{sec:thm78} & Mechanism; two-test & Mechanistic certification \\
+    \S\ref{sec:supp-tables}--\ref{sec:sim-protocol} & --- & Tables S1--S4; simulation \\
+    \bottomrule
+  \end{tabular}
+  \end{center}
+\end{table}
+
+% ==================================================================
+\section{Estimand--CV mismatch (main-text Theorem~1)}
+\label{sec:thm1}
+% ==================================================================
+
+\begin{theorem}[Estimand--CV mismatch]
+\label{thm:esm-estimand-cv}
+Let $\Rkfold(h)$ denote $K$-fold cross-validation with folds over
+individuals.  Let $\RLOPO(h)$ denote LOPO on population means.  When
+$\mathrm{Var}(\varepsilon_{ip}\mid p)>0$ and the scientific estimand
+is \Etwo\ (new population mean at a new site),
+$\mathbb{E}[\Rkfold(h)] \neq \mathbb{E}[\RLOPO(h)]$.
+\end{theorem}
+
+\begin{proof}
+Define population-level risks by estimand.
+
+\textbf{\Eone\ (within-site).}  Predict a new individual at a population
+already represented in training:
+\[
+  R_1(h) = \mathbb{E}\Big[\ell\big(h(\mathbf{x}_p), y_{i^\star p}\big)
+  \;\Big|\; p \in \mathcal{P}_{\mathrm{train}}\Big].
+\]
+
+\textbf{\Etwo\ (across-site).}  Predict the population mean at a held-out site:
+\[
+  R_2(h) = \mathbb{E}\Big[\ell\big(h(\mathbf{x}_{p^\star}),
+  \bar{y}_{p^\star}\big)\Big].
+\]
+
+Under \eqref{eq:esm-nested}, squared loss at a population mean decomposes as
+\[
+  R_2(h) = \mathbb{E}\Big[\big(h(\mathbf{x}_{p^\star})
+  - \mu(\mathbf{x}_{p^\star})\big)^2\Big]
+  + \mathrm{Var}(\bar{u}_{p^\star}),
+\]
+where $\bar{u}_{p^\star}=n_{p^\star}^{-1}\sum_i u_{i^\star p^\star}$.
+As $n_{p^\star}\to\infty$, $\mathrm{Var}(\bar{u}_{p^\star})\to 0$ and the
+target is $\mu(\cdot)$.
+
+For \Eone, conditioning on site $p$,
+\[
+  \mathbb{E}\big[(h(\mathbf{x}_p)-y_{i^\star p})^2 \mid p\big]
+  = \big(h(\mathbf{x}_p)-\mu(\mathbf{x}_p)\big)^2
+  + \mathrm{Var}(u_p\mid\mathbf{x}_p)
+  + \mathrm{Var}(\varepsilon_{ip}).
+\]
+Whenever test individuals share training-site identity,
+\[
+  R_1(h) = R_2(h) + \mathbb{E}[\mathrm{Var}(\varepsilon_{ip}\mid p)]
+  + \mathbb{E}[\mathrm{Var}(u_p\mid\mathbf{x}_p)].
+\]
+The within-population noise term
+$\mathbb{E}[\mathrm{Var}(\varepsilon_{ip}\mid p)]$ enters $R_1$ but not
+prediction of $\bar{y}_{p^\star}$ at a new site.
+
+Individual $k$-fold CV, with multiple individuals per population, places
+test and training individuals at the same $\mathbf{x}_p$.  Its expectation
+therefore targets \Eone\ and averages within-population noise into the
+reported metric.  LOPO removes site $p$ from training when predicting
+$\bar{y}_p$ and targets \Etwo.
+
+If $\mathrm{Var}(\varepsilon_{ip}\mid p)>0$, then $R_1(h)>R_2(h)$ for any
+$h$ with identical population-level fit.  Hence
+$\mathbb{E}[\Rkfold(h)] \neq \mathbb{E}[\RLOPO(h)]$ when the scientific
+estimand is \Etwo.
+\end{proof}
+
+\begin{corollary}[Ranking bias]
+\label{cor:esm-ranking-bias}
+Model ranking by $\Rkfold(h)$ need not agree with ranking by $\RLOPO(h)$
+when models differ in within-site flexibility (e.g.\ population-specific
+intercepts).
+\end{corollary}
+
+% ==================================================================
+\section{Three estimands (main-text Definition~1)}
+\label{sec:def-estimands}
+% ==================================================================
+
+\begin{definition}[Three estimands]
+\label{def:esm-three-estimands}
+\begin{enumerate}
+  \item \Eone: new individuals at known populations (individual CV).
+  \item \Etwo: new population means at new coordinates (LOPO, LOGO).
+  \item \Ethree: new regions of niche space outside training support
+        (extrapolation / OOD).
+\end{enumerate}
+\end{definition}
+
+\begin{proof}[Classification argument]
+The estimands differ by where the test point lies relative to training
+support.
+
+\textbf{\Eone.}  $p\in\mathcal{P}_{\mathrm{train}}$, new individual $i$:
+only individual-level noise changes; site identity is known.
+
+\textbf{\Etwo.}  New site $p^\star$ with $\mathbf{x}_{p^\star}$ drawn from
+the geographic process but $p^\star\notin\mathcal{P}_{\mathrm{train}}$:
+prediction requires transfer of $\mu(\mathbf{x})$; site identity must not
+leak into training.
+
+\textbf{\Ethree.}  $\mathbf{x}_{p^\star}\notin\mathcal{S}_{\mathrm{train}}
+=\supp(P_{\mathbf{x}}\mid\text{training})$: support mismatch.  No CV scheme
+on observed sites alone certifies extrapolation without invariance
+assumptions (Section~\ref{sec:thm4}).
+
+Section~\ref{sec:thm1} shows \Eone\ and \Etwo\ are not interchangeable.
+\end{proof}
+
+% ==================================================================
+\section{Gradient confounding and rank reversal}
+\label{sec:thm23}
+% ==================================================================
+
+\subsection{Setup}
+
+Populations lie on a geographic axis $g_p$.  Predictors satisfy
+$\mathbf{x}_p = \boldsymbol{\phi}(g_p)+\boldsymbol{\epsilon}_p$ with
+$\boldsymbol{\phi}$ monotone across coordinates (structured collinearity).
+The generating model is
+$y_p = \mathbf{x}_p^\top\boldsymbol{\beta}^\star + \eta_p$,
+$\eta_p\sim(0,\sigma_\eta^2)$.
+
+Let $h_j$ denote the best in-sample univariate predictor on coordinate $x_j$,
+and $h^\star$ the population-level OLS predictor on true support
+$\mathcal{S}^\star=\{k:\beta_k^\star\neq 0\}$.
+
+\subsection{Oracle risk ordering (main-text Lemma~1)}
+\label{sec:esm-lemma-oracle}
+
+\begin{lemma}[Oracle risk ordering on true support]
+\label{thm:esm-gradient}
+Under the linear model above, population-level OLS on
+$\mathcal{S}^\star=\{k:\beta_k^\star\neq 0\}$ minimizes squared prediction
+risk among predictors using only $\mathbf{x}_{\mathcal{S}^\star}$
+\citep{hastie2009}.  This optimality does not explain proxy rank reversal;
+the substantive failure mode is Theorem~\ref{thm:esm-rank-reversal} below.
+\end{lemma}
+
+\begin{proof}
+For fixed $p$, when $\beta_j^\star=0$ and $x_j$ is not sufficient for
+$\mathbf{x}_{\mathcal{S}^\star}$, any predictor using only $x_j$ incurs
+Bayes risk at least that of the best linear predictor on
+$\mathbf{x}_{\mathcal{S}^\star}$.  LOPO averages leave-one-out squared
+errors; the population-level ordering is preserved up to finite-$P$
+estimation variance.
+\end{proof}
+
+\subsection{Proxy rank reversal (main-text Theorem~2)}
+\label{sec:esm-rank-reversal}
+
+\begin{theorem}[Proxy rank reversal]
+\label{thm:esm-rank-reversal}
+Under gradient confounding, in-sample $|r|$ or AIC can rank a proxy above
+the structural model while LOPO ranks them in reverse order.
+\end{theorem}
+
+\begin{proof}
+Consider $y_p=\beta_1 x_{1,p}+\beta_2 x_{2,p}+\eta_p$ with
+$x_{2,p}=\rho x_{1,p}+\nu_p$, $\rho\neq 0$, and $\beta_2\neq 0$, while the
+proxy coordinate has $\beta_1=0$ in the generating model (latitude proxies
+ecology along the gradient).
+
+\textbf{In-sample ranking.}  Pooled OLS on $x_1$ alone estimates
+$\hat{\alpha}_1\approx \mathrm{Cov}(x_1,y)/\mathrm{Var}(x_1)$, which loads
+on $\beta_2\rho\,\mathrm{Var}(x_1)$ through collinearity.  High $|r|$ and
+low AIC for the univariate model follow when $|\rho|$ is large and
+multivariate gain is small on the training sample.
+
+\textbf{LOPO ranking.}  At held-out site $p$, leave-one-out univariate
+prediction error includes
+$(\hat{\alpha}_1^{(-p)} x_{1,p}-\beta_2 x_{2,p})^2$.  When local deviation
+$\nu_p$ is large, $x_{2,p}\neq \rho x_{1,p}$: the univariate model
+extrapolates the gradient while the bivariate model retains
+$\beta_2 x_{2,p}$.  Hence $R_{\mathrm{LOPO}}(h_j)>R_{\mathrm{LOPO}}(h^\star)$
+at such sites, and model ranking can reverse relative to in-sample $|r|$ or
+AIC.
+
+\textbf{Simulation.}  Semi-synthetic clines (500 replicates;
+Section~\ref{sec:sim-protocol}) yield 84\% rank disagreement between
+strongest $|r|$ and best LOPO model under the stated ecology-driven
+generating process---a design-specific rate, not an ecological constant.
+\end{proof}
+
+% ==================================================================
+\section{Grinnellian support bound (main-text Proposition~3)}
+\label{sec:thm4}
+% ==================================================================
+
+\begin{theorem}[Grinnellian support bound]
+\label{thm:esm-support}
+Let training environments $\mathbf{x}_p\in\mathcal{S}_{\mathrm{train}}
+\subset\mathcal{X}$.  For Lipschitz $h$ with constant $L$,
+extrapolation error at $\mathbf{x}\notin\mathcal{S}_{\mathrm{train}}$
+satisfies
+\[
+  |h(\mathbf{x})-h(\mathbf{x}_0)|
+  \le L\,\mathrm{dist}(\mathbf{x},\mathcal{S}_{\mathrm{train}}),
+\]
+for $\mathbf{x}_0$ the nearest point in $\mathcal{S}_{\mathrm{train}}$,
+unless invariance assumptions make $h$ constant off-support.  Range
+limits occur where $P(y=1\mid\mathbf{x})$ crosses a decision threshold
+outside $\mathcal{S}_{\mathrm{train}}$.
+\end{theorem}
+
+\begin{proof}
+By the triangle inequality,
+$|h(\mathbf{x})-h(\mathbf{x}_0)|\le L\|\mathbf{x}-\mathbf{x}_0\|$.
+Minimizing $\|\mathbf{x}-\mathbf{x}_0\|$ over
+$\mathbf{x}_0\in\mathcal{S}_{\mathrm{train}}$ gives the bound.
+
+For species occupancy, if $h(\mathbf{x})=\mathbb{E}[y\mid\mathbf{x}]$ is
+Lipschitz in environmental space and training occupied only
+$\mathcal{S}_{\mathrm{train}}$, predictions outside the convex hull have
+unbounded epistemic risk as distance grows unless additional invariance
+(e.g.\ IRM-style \citep{arjovsky2019}) is assumed.  A range limit is the
+geographic boundary where predicted suitability crosses a decision
+threshold outside observed support---an extrapolation failure, not a
+within-support optimization problem.
+\end{proof}
+
+% ==================================================================
+\section{Realized niche as hidden context (main-text Proposition~4)}
+\label{sec:thm5}
+% ==================================================================
+
+\begin{theorem}[Realized niche as hidden context]
+\label{thm:esm-hidden-context}
+Suppose biotic context $b_p$ affects the realized response:
+$y_p = f(\mathbf{x}_p,b_p)+\eta_p$, with $b_p$ unobserved in Grinnellian
+models that use only $\mathbf{x}_p$.  The marginal model $P(y\mid\mathbf{x})$
+integrates over $b$.  Transfer to sites where $P(b\mid\mathbf{x})$ shifts
+induces context-dependent label noise: simultaneous covariate shift in
+$P(\mathbf{x})$ and label shift in $P(y\mid\mathbf{x})$.
+\end{theorem}
+
+\begin{proof}
+An observational niche model estimates
+$\hat{h}(\mathbf{x})\approx\mathbb{E}[y\mid\mathbf{x}]
+=\mathbb{E}_{b\mid\mathbf{x}}[f(\mathbf{x},b)]$.
+
+At training sites, $P(b\mid\mathbf{x})$ is fixed.  At transfer sites, if
+$P(b\mid\mathbf{x})$ changes---competitors absent, novel mutualists---then
+$\mathbb{E}[y\mid\mathbf{x}]$ shifts even when $\mathbf{x}$ is unchanged:
+label shift conditional on $\mathbf{x}$.
+
+Equivalently, the response depends on hidden $b$; marginalizing $b$ yields
+a composite target stable only while $P(b\mid\mathbf{x})$ is stable.  This
+formalizes the realized-niche / Eltonian--Grinnellian distinction as
+hidden-variable risk \citep{soberon2007,koh2021}.
+\end{proof}
+
+% ==================================================================
+\section{Plasticity as composite-label risk (main-text Proposition~5)}
+\label{sec:thm6}
+% ==================================================================
+
+\begin{theorem}[Plasticity as composite-label risk]
+\label{thm:esm-plasticity}
+Field clines follow
+$y^{\mathrm{field}}_{ip}=g^{\mathrm{gen}}_p+g^{\mathrm{plast}}(\mathbf{x}_p)
++\epsilon_{ip}$.  Fitting $h(\mathbf{x})$ to $y^{\mathrm{field}}$ without
+decomposition targets a genetic--plastic sum, not the genetic cline
+$g^{\mathrm{gen}}$ alone.  Under plasticity,
+$\mathrm{sign}(\partial h/\partial x_j)$ can disagree with
+$\mathrm{sign}(\partial g^{\mathrm{gen}}/\partial x_j)$.
+\end{theorem}
+
+\begin{proof}
+ERM on field phenotypes minimizes
+$\mathbb{E}[(h(\mathbf{x})-y^{\mathrm{field}})^2]$.  The Bayes-optimal
+predictor is
+$h^\star(\mathbf{x})=g^{\mathrm{gen}}(\mathbf{x})+g^{\mathrm{plast}}(\mathbf{x})$
+---the composite target---not $g^{\mathrm{gen}}(\mathbf{x})$ alone.
+
+If $g^{\mathrm{plast}}(\mathbf{x})$ covaries with $\mathbf{x}$ along the
+gradient (e.g.\ temperature-induced developmental plasticity), the fitted
+slope $\partial h/\partial x_j$ conflates genetic and plastic components.
+
+\textbf{Remark (Stillwell 2010).}  Plasticity can generate phenotypic clines
+without genetic differentiation; ERM on field phenotypes therefore minimizes
+the wrong risk for an \emph{adaptation} estimand, which requires
+common-garden or breeding values as the supervision target
+\citep{via1985,stillwell2010}.
+\end{proof}
+
+% ==================================================================
+\section{Mechanistic adequacy and two-test logic}
+\label{sec:thm78}
+% ==================================================================
+
+\begin{theorem}[Mechanistic adequacy]
+\label{thm:esm-mechanism}
+Hypothesis $M$---that environment $e$ modulates selection on trait
+$z$---implies a fitness model with $z \times e$ interaction
+($\Delta W \sim z + e + z\times e$).  An additive correlational model
+$W\sim z+e$ can fit a cline in sample yet fail mechanistic tests under
+cross-environment holdout or experiment.
+\end{theorem}
+
+\begin{proof}
+If $M$ holds, the relative fitness advantage of phenotype $z$ depends on
+$e$: $\partial^2 W/(\partial z\,\partial e)\neq 0$.  An additive model sets
+the interaction coefficient to zero by construction.
+
+Along a narrow environmental range where $z$ and $e$ covary, additive and
+interactive models can fit similarly in sample.  Under manipulation (e.g.\
+selection lines at 22 vs 34\,$^\circ$C) or cross-environment holdout, the
+interaction term is identifiable.
+
+\citet{stillwell2008}: large body-size lines had higher fecundity at both
+temperatures, but the relative Large--Control advantage did \emph{not}
+increase at low temperature---falsifying the thermal-Bergmann interaction
+despite size manipulation.
+\end{proof}
+
+\begin{theorem}[Two-test logic]
+\label{thm:esm-two-test}
+Mechanism certification requires (i)~structured holdout (\Etwo) and
+(ii)~the required interaction under manipulation; neither alone suffices.
+\end{theorem}
+
+\begin{proof}
+\textbf{(i) without (ii).}  A multivariate ecology model can minimize LOPO
+RMSE (observational generalization) while the env$\times$phenotype
+interaction required by a thermal-selection story fails under experiment
+\citep{stillwell2007,stillwell2008}.
+
+\textbf{(ii) without (i).}  Interaction tests at observed sites do not
+certify transfer to new coordinates; structured holdout remains required
+for macroecological claims.
+
+The tests are logically independent.  Both are needed for mechanistic
+certification in the observe-then-experiment tradition
+\citep{lande1983,kingsolver2001}.
+\end{proof}
+
+% ==================================================================
+\section{Supplementary tables: \emph{Stator limbatus} vignette}
+\label{sec:supp-tables}
+% ==================================================================
+
+Source: author reanalysis of \citet{stillwell2007}.  Bootstrap paired LOPO
+comparisons use $B=10{,}000$ resamples; protocol matches the main-text
+Methods section and \texttt{scripts/stator\_figure2\_composite.py}.
+
+\begin{table}[h]
+  \caption{Table S1. Bootstrap paired LOPO comparisons ($B=10{,}000$).
+    Negative $\Delta$RMSE favors first model.}
+  \label{tab:esm-bootstrap}
+  \begin{center}
+  \begin{tabular}{lcccc}
+    \toprule
+    Comparison & $n$ & $\Delta$RMSE & 95\% CI & $P$(first lower) \\
+    \midrule
+    Ecology $-$ latitude & 93 & $-$0.002 & [$-$0.011, +0.006] & 0.68 \\
+    Ecology $-$ temperature & 93 & $-$0.009 & [$-$0.017, 0.000] & 0.97 \\
+    Latitude $-$ temperature & 95 & $-$0.007 & [$-$0.018, +0.006] & 0.85 \\
+    \bottomrule
+  \end{tabular}
+  \end{center}
+\end{table}
+
+\begin{table}[h]
+  \caption{Table S2. Sample composition: AIC on full survey vs LOPO on
+    matched set.  Ecology covariates missing for two populations on full
+    survey.}
+  \label{tab:esm-aic-composition}
+  \begin{center}
+  \small
+  \begin{tabular}{llccccc}
+    \toprule
+    Sample & Model & $n$ & AIC & AIC rank & LOPO RMSE & LOPO rank \\
+    \midrule
+    Full survey & Latitude & 95 & $-$161.1 & 1 & 0.105 & 2 \\
+    Full survey & Temperature & 95 & $-$147.5 & 3 & 0.111 & 3 \\
+    Full survey & Ecology & 93$^\dagger$ & $-$156.7$^\dagger$ & --- & 0.104$^\dagger$ & 1 \\
+    Matched & Latitude & 93 & $-$155.7 & 2 & 0.106 & 3 \\
+    Matched & Ecology & 93 & $-$156.7 & 1 & 0.104 & 1 \\
+    \bottomrule
+  \end{tabular}
+  \end{center}
+  \vskip 0.5em
+  {\small $^\dagger$Ecology fit uses populations with complete seed-size data.}
+\end{table}
+
+\begin{table}[h]
+  \caption{Table S3. Semi-synthetic simulation summary (500 replicates
+    $\times$ 95 populations).  Rates characterize the stated generating
+    process (Section~\ref{sec:sim-protocol}), not ecology generally.}
+  \label{tab:esm-simulation}
+  \begin{center}
+  \begin{tabular}{llc}
+    \toprule
+    Criterion & Best model & Rate \\
+    \midrule
+    Strongest in-sample $|r|$ & Latitude (proxy) & 100\% \\
+    Lowest LOPO RMSE & Ecology multivariate & 84\% \\
+    $|r|$ rank $\neq$ LOPO rank & --- & 84\% \\
+    \bottomrule
+  \end{tabular}
+  \end{center}
+\end{table}
+
+\begin{table}[h]
+  \caption{Table S4. Estimand mismatch on \emph{S.\ limbatus}
+    \citep{stillwell2007}: individual 10-fold cross-validation vs.\ LOPO on
+    population means ($n=93$).  Both schemes rank ecology above temperature,
+    but individual $k$-fold reports substantially higher RMSE because it
+    answers \Eone, not \Etwo\ (see main-text Figure~2B).}
+  \label{tab:esm-cv-unit}
+  \begin{center}
+  \begin{tabular}{lcc}
+    \toprule
+    CV scheme & Ecology RMSE & Temperature RMSE \\
+    \midrule
+    10-fold individual & 0.150 & 0.158 \\
+    LOPO population mean & 0.104 & 0.112 \\
+    \bottomrule
+  \end{tabular}
+  \end{center}
+\end{table}
+
+% ==================================================================
+\section{Simulation protocol}
+\label{sec:sim-protocol}
+% ==================================================================
+
+Each of 500 independent replicates draws $P=95$ populations.  Script:
+\texttt{scripts/simulation\_lopo\_confounding.py}.
+
+\textbf{Generating process.}
+\begin{itemize}
+  \item Ecology predictors (seed size, moisture PC1, seasonality PC1) are
+        correlated with latitude ($r\approx 0.55$).
+  \item Mean annual temperature is weakly correlated with latitude
+        ($r\approx -0.35$) and does not enter the true mean-size function.
+  \item Trait PC1 (population mean body-size axis):
+        $0.35\cdot\text{seed} + 0.30\cdot\text{moist}
+        + 0.25\cdot\text{season} + \mathcal{N}(0,\sigma^2)$.
+\end{itemize}
+
+\textbf{Candidate models:} latitude-only, temperature-only, ecology
+multivariate, temperature+ecology.  \textbf{Evaluation:} LOPO via
+leave-one-out OLS on standardized population-level predictors; in-sample
+$|r|$ and AIC computed on the same replicate.
+
+The 84\% rank-disagreement rate in Table~S3 and Figure~S1 is a property of
+this parameterization (correlation structure, effect sizes, noise level),
+not a claim about geographic clines in general.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.85\linewidth]{fig1_simulation_lopo_mismatch_rates.png}
+  \caption{Semi-synthetic validation (500 replicates; Figure~S1): under the
+    stated generating process, the strongest in-sample univariate correlate
+    (latitude) mis-ranks models relative to LOPO in 84\% of replicates
+    (main-text Figure~1).}
+  \label{fig:esm-simulation}
+\end{figure}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.85\linewidth]{fig_esm_simulation_aic_vs_lopo_example.png}
+  \caption{Single-replicate example (Figure~S2): in-sample AIC and $|r|$
+    rankings versus LOPO RMSE rankings under gradient confounding.}
+  \label{fig:esm-aic-example}
+\end{figure}
+
+% ==================================================================
+\bibliography{stillwell2026b}
+
+\end{document}

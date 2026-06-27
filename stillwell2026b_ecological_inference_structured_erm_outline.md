@@ -257,7 +257,7 @@ Umbrella review (much later):
 3. [x] Pull 2007 LOPO numbers from Project 50 into one table for §2 vignette — see [`stillwell2026b_table_2007_lopo_vignette.md`](stillwell2026b_table_2007_lopo_vignette.md)
 4. [x] Literature bib: Grinnell, Hutchinson, Araújo & Guisan, Jetz, Blackburn, Kingsolver & Huey, Gelman & Hill, Arjovsky (IRM), Koh et al. (WILDS) — see [`stillwell2026b.bib`](stillwell2026b.bib) and [`stillwell2026b_bibliography.md`](stillwell2026b_bibliography.md)
 5. [x] Decide venue → **Interface** (paired with Vol I); see [`VENUE_DECISION.md`](VENUE_DECISION.md), [`stillwell2026b_coverletter_interface.md`](stillwell2026b_coverletter_interface.md)
-6. [x] `\tex` scaffold: [`stillwell2026b_ecological_inference_structured_erm.tex`](stillwell2026b_ecological_inference_structured_erm.tex) (+ [`jmlr2e.sty`](jmlr2e.sty); compiles to PDF)
+6. [x] `\tex` scaffold + Interface draft style + ESM split — [`interface_submission.sty`](interface_submission.sty), [`stillwell2026b_ESM.tex`](stillwell2026b_ESM.tex), [`scripts/build_submission.sh`](scripts/build_submission.sh)
 
 ---
 

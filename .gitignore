@@ -1,0 +1,35 @@
+# macOS
+.DS_Store
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.env
+.venv/
+venv/
+
+# LaTeX build artifacts
+*.aux
+*.bbl
+*.blg
+*.log
+*.out
+*.toc
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+
+# Compiled PDFs
+stillwell2026b_ecological_inference_structured_erm.pdf
+stillwell2026b_ESM.pdf
+
+# Submission bundle (regenerate with scripts/build_interface_submission.sh)
+submission/
+
+# Non-paper documents
+*.docx
+
+# Internal review notes (local only)
+CRITIQUE_RESPONSE.md
+MANUSCRIPT_REVIEW.md

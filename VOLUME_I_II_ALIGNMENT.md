@@ -151,7 +151,7 @@ Volume II: “Spatial CV literature (Roberts et al.) prescribes holdout geometry
 | Table 1 correspondence | ❌ add |
 | Significance-first abstract | ❌ rewrite |
 | Computable/actionable output | ⚠️ sharpen LOPO default rule |
-| Interface length + ESM proofs | ✅ planned |
+| Interface length + ESM proofs | ✅ main trimmed (~5k words); Theorems 4--6 in ESM only |
 | Matches `1.docx` rhetorical arc | ⚠️ restructure intro/Results |
 
 **Bottom line:** Conceptually aligned. Restructured `.tex` (June 2026) follows `1.docx` rhetoric: significance abstract, Table 1, Results-first layout, dual-audience intro, operational corollary, expanded Discussion.
