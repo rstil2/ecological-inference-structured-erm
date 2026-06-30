@@ -149,19 +149,29 @@ def plot_mismatch_rates(summary: dict) -> Path:
         summary["rate_lat_r_mismatch"] * 100,
         summary["rate_ecology_best_lopo"] * 100,
     ]
-    fig, ax = plt.subplots(figsize=(5.5, 4.5))
+    fig, ax = plt.subplots(figsize=(6.0, 4.8))
     bars = ax.bar(labels, rates, color=["#d73027", "#1b7837"], edgecolor="k", linewidth=0.6)
     for bar, val in zip(bars, rates):
-        ax.text(bar.get_x() + bar.get_width() / 2, val + 1.2, f"{val:.1f}%", ha="center", fontsize=10)
-    ax.set_ylabel("Frequency across simulations (%)")
-    ax.set_ylim(0, max(rates) * 1.25)
+        ax.text(
+            bar.get_x() + bar.get_width() / 2,
+            val + 2.0,
+            f"{val:.1f}%",
+            ha="center",
+            va="bottom",
+            fontsize=10,
+        )
+    ax.set_ylabel("Frequency across simulations (%)", labelpad=10)
+    ax.set_ylim(0, max(rates) * 1.28)
     ax.set_title(
         f"Gradient confounding: in-sample vs LOPO model rank\n"
-        f"({summary['n_replicates']} replicates, $n={summary['n_populations']}$ populations)"
+        f"({summary['n_replicates']} replicates, $n={summary['n_populations']}$ populations)",
+        pad=12,
     )
-    fig.tight_layout()
+    ax.tick_params(axis="x", pad=6)
+    ax.tick_params(axis="y", pad=4)
+    fig.subplots_adjust(left=0.16, bottom=0.20, right=0.98, top=0.88)
     out = FIG / "simulation_lopo_mismatch_rates.png"
-    fig.savefig(out, dpi=150)
+    fig.savefig(out, dpi=150, bbox_inches="tight", pad_inches=0.08)
     plt.close(fig)
     return out
 
@@ -174,19 +184,23 @@ def plot_aic_lopo_example(rng: np.random.Generator) -> Path:
     aic = {n: in_sample_aic(df, feats)["aic"] for n, feats in MODELS.items()}
     lopo = {n: fast_lopo_rmse(df, feats) for n, feats in MODELS.items()}
 
-    fig, axes = plt.subplots(1, 2, figsize=(9, 4.5), sharey=False)
+    fig, axes = plt.subplots(1, 2, figsize=(9.5, 4.8), sharey=True)
     axes[0].barh(labels, [aic[n] for n in names], color="#756bb1", edgecolor="k")
-    axes[0].set_xlabel("In-sample AIC (lower better)")
-    axes[0].set_title("In-sample fit")
+    axes[0].set_xlabel("In-sample AIC (lower better)", labelpad=8)
+    axes[0].set_title("In-sample fit", pad=10)
     axes[0].invert_xaxis()
+    axes[0].tick_params(axis="x", pad=4)
+    axes[0].tick_params(axis="y", pad=4)
 
     axes[1].barh(labels, [lopo[n] for n in names], color="#1b7837", edgecolor="k")
-    axes[1].set_xlabel("LOPO RMSE (lower better)")
-    axes[1].set_title("Held-out populations")
-    fig.suptitle("Semi-synthetic cline: AIC vs LOPO ranking")
-    fig.tight_layout()
+    axes[1].set_xlabel("LOPO RMSE (lower better)", labelpad=8)
+    axes[1].set_title("Held-out populations", pad=10)
+    axes[1].tick_params(axis="x", pad=4)
+    axes[1].tick_params(axis="y", labelleft=False)
+    fig.suptitle("Semi-synthetic cline: AIC vs LOPO ranking", y=0.98)
+    fig.subplots_adjust(left=0.14, bottom=0.16, right=0.98, top=0.86, wspace=0.22)
     out = FIG / "simulation_aic_vs_lopo_example.png"
-    fig.savefig(out, dpi=150)
+    fig.savefig(out, dpi=150, bbox_inches="tight", pad_inches=0.08)
     plt.close(fig)
     return out
 

@@ -49,6 +49,12 @@ Portal: https://mc.manuscriptcentral.com/rsif
 
 REQUIRED BY PORTAL (docx)
   stillwell2026b_ecological_inference_structured_erm.docx  ← MAIN upload
+  (Identical copy: stillwell2026b_ecological_inference_structured_erm_THIS_IS_IT.docx)
+
+DO NOT upload an older build. Rebuild before every submission:
+  bash scripts/build_interface_submission.sh
+  Verify Methods + Acknowledgments contain:
+  https://github.com/rstil2/ecological-inference-structured-erm
 
 ELECTRONIC SUPPLEMENTARY MATERIAL
   stillwell2026b_ESM.pdf
